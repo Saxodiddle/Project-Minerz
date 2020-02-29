@@ -5,13 +5,13 @@ using UnityEngine.AI;
 
 public class Movement : MonoBehaviour
 {
-    public LayerMask navigable; //mesh that can be clicked on for movement
+    public LayerMask navigable; //ground plane
+    public LayerMask interact; //ingame objects
     public Camera overheadCam;
-    public Camera playerCam;
 
     private NavMeshAgent playerAgent;
     private Ray clickRay;
-    private Camera cam;
+    //private Camera cam;
 
     void Start()
     {
@@ -22,25 +22,21 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            if(overheadCam.enabled) //seems to run twice per click?
-            {
-                cam = overheadCam;
-            }
-            else if (playerCam.enabled)
-            {
-                cam = playerCam;
-            }
-
             //shoots ray from camera towards mouseclick
-            clickRay = cam.ScreenPointToRay(Input.mousePosition);
+            clickRay = overheadCam.ScreenPointToRay(Input.mousePosition);
             //point of collision from camera raycast
-            RaycastHit hitInfo; 
+            RaycastHit hitInfo;
 
-            //if ray collides with navmesh...
-            if (Physics.Raycast (clickRay, out hitInfo, 150, navigable))
+            //if ray collides with floor...
+            if (Physics.Raycast(clickRay, out hitInfo, 150, navigable))
             {
                 //...tell player to move to that point
                 playerAgent.SetDestination(hitInfo.point);
+            }
+            //if ray collides with object...
+            if (Physics.Raycast(clickRay, out hitInfo, 150, interact))
+            {
+                //...player moves near object
             }
         }
     }
